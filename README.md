@@ -1,7 +1,6 @@
 # WhimGroupWin
 
-![nl](images/whim_group_full.png)
-
+![nl](ico/whim_group_full.png)
 
 基于 .NET 10 和 WPF 的 Windows 窗口分组工具。通过独立的组合标题栏，将多个应用窗口组合在一起，支持标签切换、左右分屏、同步移动及自动组合。
 

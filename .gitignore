@@ -3,6 +3,7 @@
 [Oo]bj/
 [Aa]rtifacts/
 [Tt]est[Rr]esults/
+publish/
 
 # IDE caches and user-specific settings
 .vs/
