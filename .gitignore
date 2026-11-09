@@ -1,0 +1,24 @@
+# Build outputs and intermediate files
+[Bb]in/
+[Oo]bj/
+[Aa]rtifacts/
+[Tt]est[Rr]esults/
+
+# IDE caches and user-specific settings
+.vs/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.rsuser
+
+# Local logs and packages
+*.log
+*.nupkg
+*.snupkg
+
+# OS metadata
+Thumbs.db
+Desktop.ini
+.DS_Store

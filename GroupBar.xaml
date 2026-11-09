@@ -1,0 +1,194 @@
+<Window x:Class="WhimGroupWin.GroupBar"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:WhimGroupWin"
+        Title="WhimGroupWin 组合栏"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        ShowActivated="False"
+        Topmost="False"
+        Background="#E1E1E1"
+        FontFamily="Segoe UI"
+        FontSize="12"
+        UseLayoutRounding="True"
+        Height="{x:Static local:Configuration.BarHeight}"
+        SizeChanged="OnSizeChanged"
+        PreviewMouseLeftButtonDown="OnPreviewMouseLeftButtonDown"
+        PreviewMouseLeftButtonUp="OnPreviewMouseLeftButtonUp"
+        PreviewMouseMove="OnPreviewMouseMove">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0"
+                      ResizeBorderThickness="0"
+                      GlassFrameThickness="0"
+                      CornerRadius="0"
+                      UseAeroCaptionButtons="False"/>
+    </WindowChrome.WindowChrome>
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Background"
+                    Value="Transparent"/>
+            <Setter Property="Foreground"
+                    Value="Black"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="{x:Static local:Configuration.ControlCornerRadius}">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+                                <Setter Property="Background"
+                                        Value="#F5F5F5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ActionButton"
+               TargetType="Button"
+               BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Width"
+                    Value="{x:Static local:Configuration.ActionButtonSize}"/>
+            <Setter Property="Height"
+                    Value="{x:Static local:Configuration.ActionButtonSize}"/>
+            <Setter Property="Margin"
+                    Value="{x:Static local:Configuration.ActionButtonMargin}"/>
+            <Setter Property="FontFamily"
+                    Value="Segoe MDL2 Assets"/>
+            <Setter Property="FontSize"
+                    Value="11"/>
+        </Style>
+    </Window.Resources>
+    <DockPanel Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Window}}">
+        <Button DockPanel.Dock="Left"
+                Width="{x:Static local:Configuration.LeftSpacerWidth}"
+                Height="{x:Static local:Configuration.BarHeight}"
+                Background="Transparent"
+                FontFamily="Segoe MDL2 Assets"
+                FontSize="16"
+                HorizontalContentAlignment="Center"
+                ToolTip="更多操作"
+                AutomationProperties.Name="更多操作"
+                x:Name="ExtensionsButton"
+                Click="OnOpenExtensions">
+            <TextBlock Text="&#xE712;">
+                <TextBlock.LayoutTransform>
+                    <RotateTransform Angle="90"/>
+                </TextBlock.LayoutTransform>
+            </TextBlock>
+            <Button.ContextMenu>
+                <ContextMenu Placement="Bottom">
+                    <MenuItem x:Name="PlacementMenuItem"
+                              Header="垂直模式"
+                              Visibility="Collapsed"
+                              Click="OnChangePlacement"/>
+                    <MenuItem x:Name="SplitMenuItem"
+                              Header="左右分屏"
+                              IsCheckable="False"
+                              Click="OnSplit"/>
+                </ContextMenu>
+            </Button.ContextMenu>
+        </Button>
+        <StackPanel x:Name="ActionsPanel"
+                    DockPanel.Dock="Right"
+                    Orientation="Horizontal">
+            <Button Style="{StaticResource ActionButton}"
+                    Content="&#xE921;"
+                    ToolTip="整组最小化"
+                    Click="OnMinimize"/>
+            <Button Style="{StaticResource ActionButton}"
+                    Content="&#xE922;"
+                    ToolTip="整组最大化或还原"
+                    Click="OnMaximize"/>
+            <Button Style="{StaticResource ActionButton}"
+                    Content="&#xE8BB;"
+                    ToolTip="关闭整个组合的窗口"
+                    Click="OnCloseGroup"/>
+        </StackPanel>
+        <ScrollViewer x:Name="TabsScrollViewer"
+                      HorizontalScrollBarVisibility="Hidden"
+                      VerticalScrollBarVisibility="Disabled">
+            <ItemsControl x:Name="Tabs">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Width="{Binding Tag, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                Height="{x:Static local:Configuration.TabHeight}"
+                                Margin="{x:Static local:Configuration.TabMargin}"
+                                CornerRadius="{x:Static local:Configuration.ControlCornerRadius}">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Background"
+                                            Value="Transparent"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver"
+                                                 Value="True">
+                                            <Setter Property="Background"
+                                                    Value="#F5F5F5"/>
+                                        </Trigger>
+                                        <DataTrigger Binding="{Binding IsSelected}"
+                                                     Value="True">
+                                            <Setter Property="Background"
+                                                    Value="White"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="26"/>
+                                    <ColumnDefinition Width="26"/>
+                                </Grid.ColumnDefinitions>
+                                <Button Height="{x:Static local:Configuration.TabHeight}"
+                                        Tag="DragTab"
+                                        Margin="0"
+                                        Background="Transparent"
+                                        ToolTip="{Binding Title}"
+                                        HorizontalContentAlignment="Stretch"
+                                        Click="OnSelect">
+                                    <DockPanel Margin="8,0">
+                                        <TextBlock DockPanel.Dock="Left"
+                                                   Text="&#xE737;"
+                                                   FontFamily="Segoe MDL2 Assets"
+                                                   FontSize="13"
+                                                   Margin="0,0,8,0"
+                                                   VerticalAlignment="Center"/>
+                                        <TextBlock Text="{Binding Title}"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   VerticalAlignment="Center"/>
+                                    </DockPanel>
+                                </Button>
+                                <Button Grid.Column="1"
+                                        Content="\"
+                                        FontSize="12"
+                                        Width="22"
+                                        Height="28"
+                                        ToolTip="移出组合"
+                                        AutomationProperties.Name="移出组合"
+                                        Click="OnRemoveTab"/>
+                                <Button Grid.Column="2"
+                                        Content="&#xE8BB;"
+                                        FontFamily="Segoe MDL2 Assets"
+                                        FontSize="10"
+                                        Width="22"
+                                        Height="28"
+                                        ToolTip="关闭此窗口"
+                                        Click="OnCloseTab"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

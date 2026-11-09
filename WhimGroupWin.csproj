@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <ApplicationIcon>ico\whim_group_full.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="ico\whim_group_full.png" />
+    <EmbeddedResource Include="ico\whim_group_128.ico" LogicalName="WhimGroupWin.TrayIcon.ico" />
+    <Compile Remove="tests/**/*.cs" />
+    <Page Remove="tests/**/*.xaml" />
+    <ApplicationDefinition Remove="tests/**/*.xaml" />
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+  </ItemGroup>
+
+  <Target Name="CreatePortableAppHost" AfterTargets="Publish"
+          Condition="'$(PortableRuntimeLayout)' == 'true'">
+    <Error Condition="'$(SelfContained)' != 'true' or '$(PublishSingleFile)' == 'true'"
+           Text="PortableRuntimeLayout requires a self-contained, non-single-file publish." />
+    <CreateAppHost AppHostSourcePath="$(AppHostSourcePath)"
+                   AppHostDestinationPath="$(PublishDir)..\$(AssemblyName).exe"
+                   AppBinaryName="runtime/$(AssemblyName)$(TargetExt)"
+                   IntermediateAssembly="@(IntermediateAssembly->'%(FullPath)')"
+                   WindowsGraphicalUserInterface="true" />
+    <Delete Files="$(PublishDir)$(AssemblyName).exe" />
+  </Target>
+
+</Project>
